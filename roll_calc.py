@@ -2,41 +2,71 @@
 
 class mass_calc(object):
 	def __init__(self, hole_mass):
-		self.hole_mass = hole_mass
-		self.cold_pass = 0
-		self.hot_pass = 0
+		self.int_dict = {'hole_mass': hole_mass, 'mass_remain': 0, 'total_hot_mass': 0, 'total_cold_mass': 0, 'hot_pass': 0, 'cold_pass': 0}
+		self.mass_array = []
+		self.hot_mass = int()
+		self.cold_mass = int()
 
-	def init_pass(self, hole_mass, hot_mass, ship_mass):
-		self.a, self.b, self.c = hole_mass, hot_mass, ship_mass
-		self.mod = divmod(self.a, self.b)
-		self.hot_pass = self.mod[0]
-		self.remainder = self.mod[1]
-		self.solve_pass()
+	def start_pass(self):
+		a = self.int_dict
+		a['total_hot_mass'] = self.get_hot_mass()
+		a['total_cold_mass'] = self.get_cold_mass()
+		mod = divmod(a['hole_mass'], a['total_hot_mass'])
+		a['hot_pass'] = mod[0]
+		a['mass_remain'] = mod[1]
+		self.coarse_pass()
 
-	def solve_pass(self):
-		if (self.hot_pass % 2 != 0 and self.cold_pass == 0):
-			self.hot_pass = self.hot_pass + 1
-			print(str(int(self.hot_pass)) + " Pass(es) Hot\n")
-		elif (self.hot_pass % 2 == 0  and self.remainder / self.c > 1):
-			print(str(int(self.hot_pass)) + " Pass(es) Hot\n"
-					"Then 1 Pass Cold\n"
+	def coarse_pass(self):
+		a = self.int_dict
+		if (a['hot_pass'] % 2 != 0 and a['cold_pass'] == 0):
+			a['hot_pass'] = a['hot_pass'] + 1
+			print("\n" + str(int(a['hot_pass'])) + " Combined Pass(es) Hot\n")
+		elif (a['hot_pass'] % 2 == 0  and a['mass_remain'] / a['total_cold_mass'] > 1):
+			print("\n" + str(int(a['hot_pass'])) + " Combined Passes Hot\n"
+					"Then 1 Combined Pass Cold\n"
 					"Then 1 Final Pass Hot.\n")
-		elif (self.hot_pass % 2 != 0 and self.remainder / (self.c + (self.c * self.cold_pass)) > 1):
-			print(str(int(self.hot_pass)) + " Pass(es) Hot\n"
-					"Then " + str(int(self.cold_pass)) + " Pass(es) Cold\n"
-					"Then 1 Final Pass Hot.")
-		elif ((self.hot_pass + self.cold_pass) % 2 == 0 and self.cold_pass !=0 and self.remainder / self.c > 1):
-			print(str(int(self.hot_pass)) + " Pass(es) Hot\n"
-					"Then " + str(int(self.cold_pass)) + " Pass(es) Cold\n"
-					"Then 1 Final Pass Hot")
-		else:			
-			self.cold_pass = self.cold_pass + 1
-			self.hot_pass = self.hot_pass - 1
-			self.remainder = self.remainder + self.b - self.c
-			self.solve_pass()
+		elif (a['hot_pass'] % 2 != 0 and a['mass_remain'] / (a['total_cold_mass'] + (a['total_cold_mass'] * a['cold_pass'])) > 1):
+			print("\n" + str(int(a['hot_pass'])) + " Combined Pass(es) Hot\n"
+					"Then " + str(int(a['cold_pass'])) + " Combined Pass(es) Cold\n"
+					"Then 1 Final Pass Hot.\n")
+		elif ((a['hot_pass'] + a['cold_pass']) % 2 == 0 and a['cold_pass'] !=0 and a['mass_remain'] / a['total_cold_mass'] > 1):
+			print("\n" + str(int(a['hot_pass'])) + " Combined Pass(es) Hot\n"
+					"Then " + str(int(a['cold_pass'])) + " Combined Pass(es) Cold\n"
+					"Then 1 Final Pass Hot.\n")
+		else:
+			self.fine_pass()
+	
+	def fine_pass(self):
+		a = self.int_dict
+		for ship in self.mass_array:
+			if (a['hot_pass'] % 2 == 0 and a['mass_remain'] / ship[0] > 1 and a['mass_remain'] / ship[0] < 2):
+				print("\n" + str(int(a['hot_pass'])) + " Combined Pass(es) Hot\n"
+						"then 1 Pass Cold With " + ship[2] + "\n"
+						"Then 1 Final Pass Hot.\n")
+				return
+		a['cold_pass'] = a['cold_pass'] + 1
+		a['hot_pass'] = a['hot_pass'] - 1
+		a['mass_remain'] = a['mass_remain'] + a['total_hot_mass'] - a['total_cold_mass']
+		self.coarse_pass()
 
-	def mass_calc(self):
-		self.ship_mass = float(raw_input("Total ship mass in Tons (Check fitting window): ")) * 1000
-		self.mwd_mass = float(raw_input("Total number of mwd's: ")) * 50000000
-		self.total_hot_mass = (self.ship_mass + self.mwd_mass)
-		self.init_pass(self.hole_mass, self.total_hot_mass, self.ship_mass)
+
+	def get_mass(self):
+		ship_num = int(raw_input("How many ships you got?: "))
+		for x in xrange(ship_num):
+			y = float(raw_input("\nTotal ship mass in Tons (Check fitting window): ")) * 1000
+			z = float(raw_input("Does your ship have an mwd?(1 for yes, 0 for no): "))
+			zz = str(raw_input("Oh and what do you wanna name this ship?: "))
+			self.mass_array.append([y, z, zz])
+		self.start_pass()
+
+	def get_hot_mass(self):
+		for ship in self.mass_array:
+        		self.hot_mass = self.hot_mass + ship[0]
+        		if ship[1] == 1:
+                		self.hot_mass = self.hot_mass + 50000000
+		return self.hot_mass
+	
+	def get_cold_mass(self):
+		for ship in self.mass_array:
+			self.cold_mass = self.cold_mass + ship[0]
+		return self.cold_mass
