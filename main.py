@@ -19,7 +19,7 @@ def wh_info(db_con):
 		print("Invalid WH code.")
 		main()
 	d = roll_calc.mass_calc(float(result[0][3]))
-	d.mass_calc()
+	d.get_mass()
 
 def main():
 	db_con = mysql_con.crit_db()
