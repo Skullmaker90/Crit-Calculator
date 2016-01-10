@@ -1,5 +1,8 @@
 #!/usr/bin/python
 
+import locale
+locale.setlocale(locale.LC_ALL, '')
+
 class mass_calc(object):
 	def __init__(self, hole_mass, params):
 		self.int_dict = {'hole_mass': hole_mass, 'mass_remain': 0, 'total_hot_mass': 0, 'total_cold_mass': 0, 'hot_pass': 0, 'cold_pass': 0}
@@ -21,25 +24,29 @@ class mass_calc(object):
 		print(a['mass_remain'])
 		if (a['hot_pass'] % 2 != 0 and a['cold_pass'] == 0):
 			a['hot_pass'] = a['hot_pass'] + 1
-			x = ("\n" + str(int(a['hot_pass'])) + " Combined Pass(es) Hot\n")
+			x = ("\n" + str(int(a['hot_pass'])) + " Combined Pass(es) Hot\n"
+				"With a remainder of: " + locale.format("%d", a['mass_remain'], 1) + " kg\n")
 			x = "<br />".join(x.split("\n"))
 			return x
 		elif (a['hot_pass'] % 2 == 0  and a['mass_remain'] / a['total_cold_mass'] > 1):
 			x = ("\n" + str(int(a['hot_pass'])) + " Combined Passes Hot\n"
 					"Then 1 Combined Pass Cold\n"
-					"Then 1 Final Pass Hot.\n")
+					"Then 1 Final Pass Hot.\n"
+					"With a remainder of: " + locale.format("%d", a['mass_remain'], 1) + " kg\n")
 			x = "<br />".join(x.split("\n"))
 			return x
 		elif (a['hot_pass'] % 2 != 0 and a['mass_remain'] / (a['total_cold_mass'] + (a['total_cold_mass'] * a['cold_pass'])) > 1):
 			x = ("\n" + str(int(a['hot_pass'])) + " Combined Pass(es) Hot\n"
 					"Then " + str(int(a['cold_pass'])) + " Combined Pass(es) Cold\n"
-					"Then 1 Final Pass Hot.\n")
+					"Then 1 Final Pass Hot.\n"
+					"With a remainder of: " + locale.format("%d", a['mass_remain'], 1) + " kg\n")
 			x = "<br />".join(x.split("\n"))
 			return x
 		elif ((a['hot_pass'] + a['cold_pass']) % 2 == 0 and a['cold_pass'] !=0 and a['mass_remain'] / a['total_cold_mass'] > 1):
 			x = ("\n" + str(int(a['hot_pass'])) + " Combined Pass(es) Hot\n"
 					"Then " + str(int(a['cold_pass'])) + " Combined Pass(es) Cold\n"
-					"Then 1 Final Pass Hot.\n")
+					"Then 1 Final Pass Hot.\n"
+					"With a remainder of: " + locale.format("%d", a['mass_remain'], 1) + " kg\n")
 			x = "<br />".join(x.split("\n"))
 			return x
 		else:
@@ -51,7 +58,8 @@ class mass_calc(object):
 			if (a['hot_pass'] % 2 == 0 and a['mass_remain'] / int(ship[1]) > 1 and a['mass_remain'] / int(ship[1]) < 2):
 				x = ("\n" + str(int(a['hot_pass'])) + " Combined Pass(es) Hot\n"
 					"then 1 Pass Cold With " + str(ship[0]) + "\n"
-						"Then 1 Final Pass Hot.\n")
+						"Then 1 Final Pass Hot.\n"
+						"With a remainder of: " + locale.format("%d", a['mass_remain'], 1) + " kg\n")
 				x = "<br />".join(x.split("\n"))
 				return x
 		a['cold_pass'] = a['cold_pass'] + 1
