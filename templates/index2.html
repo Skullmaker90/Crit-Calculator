@@ -1,0 +1,27 @@
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+<h2>Crit Calculator</h2>
+
+<p>
+<form method="post">
+Wormhole Code:&nbsp;<input maxlength="4" name="wh_code" size="4" type="text" />
+<input type="submit" name="initialize" value="Submit" />
+</form>
+</p>
+
+<div id="hole_info">
+{% autoescape false %}
+{{ wh_result }}
+{% endautoescape%}
+<br />
+</div>
+<form method="post">
+# Of Ships:&nbsp;<input maxlength="2" name="ship_count" size="4" type="text" />
+<input type="submit" name="roll_count" value="Submit" />
+</form>
+
+</body>
+</html>
