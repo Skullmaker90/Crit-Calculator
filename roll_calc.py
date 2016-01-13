@@ -67,16 +67,6 @@ class mass_calc(object):
 		a['mass_remain'] = a['mass_remain'] + a['total_hot_mass'] - a['total_cold_mass']
 		return self.coarse_pass()
 
-
-	#def get_mass(self):
-	#	ship_num = int(raw_input("How many ships you got?: "))
-	#	for x in xrange(ship_num):
-	#		y = float(raw_input("\nTotal ship mass in Tons (Check fitting window): ")) * 1000
-	#		z = float(raw_input("Does your ship have an mwd?(1 for yes, 0 for no): "))
-	#		zz = str(raw_input("Oh and what do you wanna name this ship?: "))
-	#		self.mass_array.append([y, z, zz])
-	#	self.start_pass()
-
 	def get_hot_mass(self):
 		for ship in self.mass_array:
 			ship[1] = int(ship[1]) * 1000
